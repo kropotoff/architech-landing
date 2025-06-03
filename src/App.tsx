@@ -1,5 +1,5 @@
 import './App.css';
-import { Box, Button, Container, Divider, Typography } from '@mui/material'
+import { Box, Button, Container, Typography } from '@mui/material'
 import logo from './assets/architech_logo.png';
 import aboutImg from './assets/architech_picture.jpg';
 

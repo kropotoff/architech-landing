@@ -7,6 +7,7 @@ import AboutSection from './components/AboutSection';
 import SoundcloudSection from './components/SoundcloudSection';
 import SectionDivider from './components/SectionDivider';
 import FadeInSection from './components/FadeInSection';
+import Gallery from './components/Gallery';
 
 
 function App() {
@@ -15,6 +16,8 @@ function App() {
       <FadeInSection><Header /></FadeInSection>
       <FadeInSection><LandingText /></FadeInSection>
       <FadeInSection><Links /></FadeInSection>
+      <SectionDivider />
+      <FadeInSection><Gallery /></FadeInSection> 
       <SectionDivider />
       <FadeInSection><AboutSection /></FadeInSection>
       <SectionDivider />

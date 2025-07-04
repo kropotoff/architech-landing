@@ -12,7 +12,7 @@ const SoundcloudSection = () => (
         scrolling="no"
         frameBorder="no"
         allow="autoplay"
-        src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/1990955323&color=%2328252a&auto_play=true&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true"
+        src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/1990955323&color=%2328252a&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true"
         title="SoundCloud Player"
       ></iframe>
       <div style={{

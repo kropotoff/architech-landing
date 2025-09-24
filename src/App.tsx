@@ -1,21 +1,19 @@
 import './App.css';
 import { Container } from '@mui/material';
-import Header from './components/Header';
 import LandingText from './components/LandingText';
-import Links from './components/Links';
 import AboutSection from './components/AboutSection';
 import SoundcloudSection from './components/SoundcloudSection';
 import SectionDivider from './components/SectionDivider';
 import FadeInSection from './components/FadeInSection';
 import Gallery from './components/Gallery';
+import Hero from './components/Hero.tsx';
 
 
 function App() {
   return (
     <Container maxWidth="sm" className="center-container">
-      <FadeInSection><Header /></FadeInSection>
+      <FadeInSection><Hero /></FadeInSection>
       <FadeInSection><LandingText /></FadeInSection>
-      <FadeInSection><Links /></FadeInSection>
       <SectionDivider />
       <FadeInSection><Gallery /></FadeInSection> 
       <SectionDivider />

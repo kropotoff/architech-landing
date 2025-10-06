@@ -3,9 +3,10 @@ import arcaneFlyer from '../assets/arcane_flyer.jpg';
 import architechPlaying from '../assets/architech_playing.jpg';
 import architechPicture from '../assets/architech_picture.jpg';
 import GoaLisboaFlyer from '../assets/GoaLisboaFlyer.jpeg';
-import architechLogo from '../assets/architech_logo.png';
 import lineup from '../assets/lineup.jpg';
 import pizzaparty from '../assets/pizzaparty.jpg';
+import micromusicThumb from '../assets/micromusic_thumb.jpg';
+import fridayHappynessThumb from '../assets/fridayHappyness_thumb.jpg';
 import Typography from '@mui/material/Typography';
 import Dialog from '@mui/material/Dialog';
 import IconButton from '@mui/material/IconButton';
@@ -14,7 +15,8 @@ import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 
 const media = [
-  { type: 'video', src: 'https://player.vimeo.com/video/1098844722', thumb: architechLogo },
+  { type: 'video', src: 'https://player.vimeo.com/video/1124918177', thumb: micromusicThumb },
+  { type: 'video', src: 'https://player.vimeo.com/video/1098844722', thumb: fridayHappynessThumb },
   { type: 'image', src: architechPlaying },
   { type: 'image', src: lineup },
   { type: 'image', src: pizzaparty },
@@ -61,39 +63,63 @@ const Gallery = () => {
       <div className="gallery-container">
         {media.map((item, idx) =>
           item.type === 'video' ? (
-            <div
-              key={idx}
-              className="gallery-image"
-              style={{
-                position: 'relative',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                background: '#111',
-              }}
-              onClick={() => handleOpen(item)}
-            >
-              <img
-                src={item.thumb}
-                alt="Video thumbnail"
+            item.thumb ? (
+              <div
+                key={idx}
+                className="gallery-image"
                 style={{
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'cover',
-                  borderRadius: 18,
-                  opacity: 0.85,
+                  position: 'relative',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  background: '#111',
                 }}
-              />
-              <span style={{
-                color: '#fff',
-                fontSize: 48,
-                position: 'absolute',
-                zIndex: 2,
-                pointerEvents: 'none',
-                textShadow: '0 2px 8px #000'
-              }}>▶</span>
-            </div>
+                onClick={() => handleOpen(item)}
+              >
+                <img
+                  src={item.thumb}
+                  alt="Video thumbnail"
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover',
+                    borderRadius: 18,
+                    opacity: 0.85,
+                  }}
+                />
+                <span style={{
+                  color: '#fff',
+                  fontSize: 48,
+                  position: 'absolute',
+                  zIndex: 2,
+                  pointerEvents: 'none',
+                  textShadow: '0 2px 8px #000'
+                }}>▶</span>
+              </div>
+            ) : (
+              <div
+                key={idx}
+                className="gallery-image"
+                style={{
+                  position: 'relative',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  background: '#111',
+                }}
+                onClick={() => handleOpen(item)}
+              >
+                <span style={{
+                  color: '#fff',
+                  fontSize: 48,
+                  zIndex: 2,
+                  pointerEvents: 'none',
+                  textShadow: '0 2px 8px #000'
+                }}>▶</span>
+              </div>
+            )
           ) : (
             <img
               key={idx}

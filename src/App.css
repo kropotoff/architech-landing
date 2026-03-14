@@ -58,41 +58,13 @@ body {
   border: none;
 }
 
-/* 5. Utility Classes */
-.centered-block {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-/* 6. Section Labels & Headings */
-.section-label {
-  font-family: 'Space Mono', monospace;
-  font-size: 0.7rem;
-  letter-spacing: 0.25em;
-  text-transform: uppercase;
-  color: var(--color-accent);
-  margin-bottom: 0.5rem;
-  display: block;
-}
-
-/* 7. Components & Elements */
+/* 5. Components & Elements */
 .architech-logo {
   width: 100%;
   display: block;
   margin: 0 auto var(--space-4) auto;
 }
 
-.about-img {
-  width: 100%;
-  aspect-ratio: 1/1;
-  height: auto;
-  border-radius: 4px;
-  margin-bottom: var(--space-4);
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.15);
-  object-fit: cover;
-  object-position: top;
-}
 
 .architech-btn {
   background: transparent !important;

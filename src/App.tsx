@@ -1,5 +1,5 @@
 import './App.css';
-import { Container } from '@mui/material';
+import { Container, Box } from '@mui/material';
 import LandingText from './components/LandingText';
 import AboutSection from './components/AboutSection';
 import SoundcloudSection from './components/SoundcloudSection';
@@ -11,17 +11,30 @@ import Hero from './components/Hero.tsx';
 
 function App() {
   return (
-    <Container maxWidth="sm" className="center-container">
+    <Container maxWidth="md" className="center-container">
       <FadeInSection><Hero /></FadeInSection>
-      <FadeInSection><LandingText /></FadeInSection>
+      <Box maxWidth="sm" mx="auto">
+        <FadeInSection><LandingText /></FadeInSection>
+      </Box>
       <SectionDivider />
-      <FadeInSection><Gallery /></FadeInSection> 
+      <FadeInSection><Gallery /></FadeInSection>
       <SectionDivider />
-      <FadeInSection><AboutSection /></FadeInSection>
+      <Box maxWidth="sm" mx="auto">
+        <FadeInSection><AboutSection /></FadeInSection>
+      </Box>
       <SectionDivider />
       <FadeInSection><SoundcloudSection /></FadeInSection>
-      <footer style={{ marginTop: 40, fontSize: '0.95em', color: '#888' }}>
-        © 2025 Andrei Kropotoff. Made with ❤️. All rights reserved. Rhythms, and vibes shared freely.
+      <footer style={{
+        marginTop: 60,
+        marginBottom: 24,
+        fontSize: '0.7rem',
+        color: 'var(--color-text-muted)',
+        fontFamily: "'Space Mono', monospace",
+        letterSpacing: '0.12em',
+        textTransform: 'uppercase',
+        textAlign: 'center',
+      }}>
+        ARCHITECH © 2025 — ALL RIGHTS RESERVED
       </footer>
     </Container>
   );

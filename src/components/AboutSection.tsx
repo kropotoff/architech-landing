@@ -1,7 +1,7 @@
 import { Box, Typography } from '@mui/material';
 
 const AboutSection = () => (
-  <Box id="about" textAlign="center">
+  <Box id="about">
     <Typography
       gutterBottom
       mt={4}

@@ -3,6 +3,7 @@ import { Box, Button, IconButton, Tooltip } from '@mui/material';
 import InstagramIcon from '@mui/icons-material/Instagram';
 import SoundcloudIcon from '@mui/icons-material/CloudQueue';
 import WhatsAppIcon from '@mui/icons-material/WhatsApp';
+import YouTubeIcon from '@mui/icons-material/YouTube';
 import logo from '../assets/architech_logo.png';
 import profile2 from '../assets/profile2.jpg';
 import BookingModal from './BookingModal';
@@ -10,6 +11,7 @@ import BookingModal from './BookingModal';
 const socialLinks: { label: string; url: string; icon: ReactElement }[] = [
   { label: 'Instagram', url: 'https://www.instagram.com/architech.pt', icon: <InstagramIcon /> },
   { label: 'SoundCloud', url: 'https://soundcloud.com/andrei-kropotoff', icon: <SoundcloudIcon /> },
+  { label: 'Elevator Music', url: 'https://www.youtube.com/@ElevatorMusicPT', icon: <YouTubeIcon /> },
   { label: 'WhatsApp', url: `https://wa.me/${import.meta.env.VITE_WHATSAPP_NUMBER}`, icon: <WhatsAppIcon /> },
 ];
 

@@ -13,6 +13,7 @@ import blackAndWhite from '../assets/black_and_white.jpg';
 import Typography from '@mui/material/Typography';
 import Dialog from '@mui/material/Dialog';
 import IconButton from '@mui/material/IconButton';
+import useMediaQuery from '@mui/material/useMediaQuery';
 import CloseIcon from '@mui/icons-material/Close';
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
@@ -34,6 +35,7 @@ const Gallery = () => {
   const [open, setOpen] = useState(false);
   const [selected, setSelected] = useState<{ type: string; src: string; vimeoId?: number } | null>(null);
   const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
+  const isMobile = useMediaQuery('(max-width:600px)');
 
   // Refs for the Vimeo preview container divs and player instances
   const previewContainerRefs = useRef<Map<number, HTMLDivElement>>(new Map());
@@ -158,6 +160,26 @@ const Gallery = () => {
                   <polygon points="23,18 23,38 41,28" fill="white" />
                 </svg>
 
+                {/* Persistent video badge — always visible, communicates media type */}
+                <div style={{
+                  position: 'absolute',
+                  top: 10,
+                  left: 10,
+                  zIndex: 4,
+                  pointerEvents: 'none',
+                  fontFamily: "'Space Mono', monospace",
+                  fontSize: '0.55rem',
+                  letterSpacing: '0.18em',
+                  textTransform: 'uppercase',
+                  color: 'rgba(240,239,245,0.7)',
+                  background: 'rgba(10,10,12,0.55)',
+                  border: '1px solid rgba(255,255,255,0.12)',
+                  borderRadius: 2,
+                  padding: '3px 7px',
+                }}>
+                  Video
+                </div>
+
                 {/* "Click for sound" hint — appears on hover */}
                 <div
                   style={{
@@ -202,16 +224,25 @@ const Gallery = () => {
       <Dialog
         open={open}
         onClose={handleClose}
-        maxWidth="md"
+        fullScreen={isMobile}
+        maxWidth={false}
         PaperProps={{
-          style: {
-            background: '#0f0f12',
-            border: '1px solid rgba(124, 106, 247, 0.2)',
-            borderRadius: 4,
-            padding: 0,
+          sx: {
+            background: '#0a0a0c',
+            border: isMobile ? 'none' : '1px solid rgba(124, 106, 247, 0.15)',
+            borderRadius: isMobile ? 0 : '4px',
+            m: isMobile ? 0 : '16px',
+            width: isMobile ? '100%' : 'calc(100vw - 32px)',
+            maxWidth: '1400px',
+            height: isMobile ? '100%' : 'auto',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            overflow: 'hidden',
           },
         }}
       >
+        {/* Close */}
         <IconButton
           aria-label="close"
           onClick={handleClose}
@@ -221,90 +252,94 @@ const Gallery = () => {
             top: 12,
             color: '#f0eff5',
             zIndex: 10,
-            background: 'rgba(18,18,22,0.7)',
-            '&:hover': { background: 'rgba(124,106,247,0.25)' },
+            background: 'rgba(18,18,22,0.8)',
+            '&:hover': { background: 'rgba(124,106,247,0.3)' },
           }}
         >
           <CloseIcon />
         </IconButton>
+
+        {/* Content */}
         {selected && selected.type === 'video' ? (
-          <iframe
-            src={`${selected.src}?autoplay=1`}
-            title="Vimeo Video"
-            style={{
-              width: '80vw',
-              height: '45vw',
-              maxWidth: 900,
-              maxHeight: 506,
-              display: 'block',
-              margin: '40px auto 20px auto',
-              borderRadius: 4,
-              border: 'none',
-              boxShadow: '0 4px 32px rgba(0,0,0,0.55)',
-              background: '#000',
-            }}
-            allow="autoplay; fullscreen; picture-in-picture"
-            allowFullScreen
-          />
+          <div style={{
+            width: '100%',
+            aspectRatio: '16/9',
+            maxHeight: isMobile ? '100vh' : '85vh',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}>
+            <iframe
+              src={`${selected.src}?autoplay=1`}
+              title="Vimeo Video"
+              style={{
+                width: '100%',
+                height: '100%',
+                border: 'none',
+                display: 'block',
+                background: '#000',
+              }}
+              allow="autoplay; fullscreen; picture-in-picture"
+              allowFullScreen
+            />
+          </div>
         ) : (
           selected && (
             <img
               src={selected.src}
               alt="Large preview"
               style={{
-                maxWidth: '90vw',
-                maxHeight: '80vh',
                 display: 'block',
-                margin: '40px auto 20px auto',
-                borderRadius: 4,
-                boxShadow: '0 4px 32px rgba(0,0,0,0.55)',
+                maxWidth: '100%',
+                maxHeight: isMobile ? '100vh' : '90vh',
+                width: 'auto',
+                height: 'auto',
+                objectFit: 'contain',
               }}
             />
           )
         )}
-        {open && (
-          <>
-            {currentIndex > 0 && (
-              <IconButton
-                aria-label="previous"
-                onClick={handlePrev}
-                sx={{
-                  position: 'absolute',
-                  left: 12,
-                  top: '50%',
-                  transform: 'translateY(-50%)',
-                  color: 'rgba(255,255,255,0.75)',
-                  background: 'rgba(18,18,22,0.7)',
-                  zIndex: 20,
-                  width: 38,
-                  height: 38,
-                  '&:hover': { background: 'rgba(124,106,247,0.3)', color: '#f0eff5' },
-                }}
-              >
-                <ArrowBackIosNewIcon sx={{ fontSize: 20 }} />
-              </IconButton>
-            )}
-            {currentIndex < media.length - 1 && (
-              <IconButton
-                aria-label="next"
-                onClick={handleNext}
-                sx={{
-                  position: 'absolute',
-                  right: 12,
-                  top: '50%',
-                  transform: 'translateY(-50%)',
-                  color: 'rgba(255,255,255,0.75)',
-                  background: 'rgba(18,18,22,0.7)',
-                  zIndex: 20,
-                  width: 38,
-                  height: 38,
-                  '&:hover': { background: 'rgba(124,106,247,0.3)', color: '#f0eff5' },
-                }}
-              >
-                <ArrowForwardIosIcon sx={{ fontSize: 20 }} />
-              </IconButton>
-            )}
-          </>
+
+        {/* Prev / Next */}
+        {open && currentIndex > 0 && (
+          <IconButton
+            aria-label="previous"
+            onClick={handlePrev}
+            sx={{
+              position: 'absolute',
+              left: 8,
+              top: '50%',
+              transform: 'translateY(-50%)',
+              color: 'rgba(255,255,255,0.75)',
+              background: 'rgba(18,18,22,0.8)',
+              zIndex: 20,
+              width: 40,
+              height: 40,
+              '&:hover': { background: 'rgba(124,106,247,0.3)', color: '#f0eff5' },
+            }}
+          >
+            <ArrowBackIosNewIcon sx={{ fontSize: 18 }} />
+          </IconButton>
+        )}
+        {open && currentIndex < media.length - 1 && (
+          <IconButton
+            aria-label="next"
+            onClick={handleNext}
+            sx={{
+              position: 'absolute',
+              right: 8,
+              top: '50%',
+              transform: 'translateY(-50%)',
+              color: 'rgba(255,255,255,0.75)',
+              background: 'rgba(18,18,22,0.8)',
+              zIndex: 20,
+              width: 40,
+              height: 40,
+              '&:hover': { background: 'rgba(124,106,247,0.3)', color: '#f0eff5' },
+            }}
+          >
+            <ArrowForwardIosIcon sx={{ fontSize: 18 }} />
+          </IconButton>
         )}
       </Dialog>
     </div>

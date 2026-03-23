@@ -13,22 +13,28 @@ function App() {
   return (
     <Container maxWidth="md" className="center-container">
       <FadeInSection><Hero /></FadeInSection>
-      <Box maxWidth="sm" mx="auto">
+      <Box maxWidth="sm" mx="auto" pt={5}>
         <FadeInSection><LandingText /></FadeInSection>
       </Box>
       <SectionDivider />
-      <FadeInSection><Gallery /></FadeInSection>
+      <Box py={5}>
+        <FadeInSection><Gallery /></FadeInSection>
+      </Box>
       <SectionDivider />
-      <Box maxWidth="sm" mx="auto">
+      <Box maxWidth="sm" mx="auto" py={5}>
         <FadeInSection><AboutSection /></FadeInSection>
       </Box>
       <SectionDivider />
-      <FadeInSection><SoundcloudSection /></FadeInSection>
+      <Box maxWidth="md" py={5}>
+        <FadeInSection><SoundcloudSection /></FadeInSection>
+      </Box>
       <footer style={{
-        marginTop: 60,
-        marginBottom: 24,
+        borderTop: '1px solid rgba(124, 106, 247, 0.1)',
+        paddingTop: 24,
+        marginTop: 32,
+        marginBottom: 32,
         fontSize: '0.7rem',
-        color: 'var(--color-text-muted)',
+        color: 'var(--color-text-secondary)',
         fontFamily: "'Space Mono', monospace",
         letterSpacing: '0.12em',
         textTransform: 'uppercase',

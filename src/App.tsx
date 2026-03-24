@@ -13,7 +13,7 @@ function App() {
   return (
     <Container maxWidth="md" className="center-container">
       <FadeInSection><Hero /></FadeInSection>
-      <Box maxWidth="sm" mx="auto" pt={5}>
+      <Box maxWidth="sm" mx="auto" pt={5} sx={{ px: { xs: '20px', sm: 0 } }}>
         <FadeInSection><LandingText /></FadeInSection>
       </Box>
       <SectionDivider />
@@ -21,18 +21,19 @@ function App() {
         <FadeInSection><Gallery /></FadeInSection>
       </Box>
       <SectionDivider />
-      <Box maxWidth="sm" mx="auto" py={5}>
+      <Box maxWidth="sm" mx="auto" py={5} sx={{ px: { xs: '20px', sm: 0 } }}>
         <FadeInSection><AboutSection /></FadeInSection>
       </Box>
       <SectionDivider />
-      <Box maxWidth="md" py={5}>
+      <Box maxWidth="md" py={5} sx={{ px: { xs: '20px', sm: 0 } }}>
         <FadeInSection><SoundcloudSection /></FadeInSection>
       </Box>
-      <footer style={{
+      <Box component="footer" sx={{
         borderTop: '1px solid rgba(124, 106, 247, 0.1)',
-        paddingTop: 24,
-        marginTop: 32,
-        marginBottom: 32,
+        pt: 3,
+        mt: 4,
+        mb: 4,
+        px: { xs: '20px', sm: 0 },
         fontSize: '0.7rem',
         color: 'var(--color-text-secondary)',
         fontFamily: "'Space Mono', monospace",
@@ -41,7 +42,7 @@ function App() {
         textAlign: 'center',
       }}>
         ARCHITECH © 2025 — ALL RIGHTS RESERVED
-      </footer>
+      </Box>
     </Container>
   );
 }

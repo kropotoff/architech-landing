@@ -25,9 +25,14 @@
 }
 
 /* 3. Global Styles */
+html {
+  overflow-x: hidden;
+}
+
 body {
   margin: 0;
   padding: 0;
+  overflow-x: hidden;
   font-family: 'Space Mono', monospace;
   color: var(--color-text-primary);
   background-color: var(--color-bg-base);
@@ -158,33 +163,24 @@ body {
     padding: 0 !important;
   }
 
-  /* Consistent 20px horizontal gutter — everything aligns to this baseline */
+  /* Container: zero padding — text sections get their own gutter via sx in App.tsx */
   .center-container {
-    padding: 0 20px !important;
+    padding: 0 !important;
     margin-top: 0 !important;
     margin-bottom: 0 !important;
     border-radius: 0 !important;
     box-shadow: none !important;
   }
 
-  /* Full-bleed breakouts — hero and gallery punch through the gutter */
+  /* Hero + gallery are naturally full-bleed when container has no padding */
   .hero-card {
-    margin-left: -20px !important;
-    margin-right: -20px !important;
-    width: calc(100% + 40px) !important;
-    max-width: calc(100% + 40px) !important;
+    max-width: 100% !important;
     border-radius: 0 !important;
     box-shadow: none;
     margin-bottom: 8px;
   }
 
-  .gallery-container {
-    margin-left: -20px;
-    margin-right: -20px;
-    width: calc(100% + 40px);
-  }
-
-  /* Socials: wrap naturally — enough room at 20px gutter */
+  /* Socials: wrap naturally */
   .hero-socials {
     flex-wrap: wrap;
     justify-content: center;
@@ -211,7 +207,7 @@ body {
     min-width: 80px !important;
   }
 
-  /* Text: left padding only for border-left breathing room — gutter provides the outer margin */
+  /* Text: left padding only for border-left breathing room — gutter provided by parent Box */
   .about-text,
   .landing-text {
     font-size: 0.92rem;

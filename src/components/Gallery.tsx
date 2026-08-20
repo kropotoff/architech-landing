@@ -3,7 +3,7 @@ import Player from '@vimeo/player';
 import arcaneFlyer from '../assets/arcane_flyer.jpg';
 import architechPlaying from '../assets/architech_playing.jpg';
 import architechPicture from '../assets/architech_picture.jpg';
-import GoaLisboaFlyer from '../assets/GoaLisboaFlyer.jpeg';
+// import GoaLisboaFlyer from '../assets/GoaLisboaFlyer.jpeg';
 import lineup from '../assets/lineup.jpg';
 import micromusicThumb from '../assets/micromusic_thumb.jpg';
 import fridayHappynessThumb from '../assets/fridayHappyness_thumb.jpg';

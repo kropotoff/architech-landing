@@ -20,6 +20,7 @@ import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 
 const media = [
   { type: 'image', src: feels },
+  { type: 'youtube', src: 'https://www.youtube.com/embed/XzpRCkr2HHs', thumb: 'https://img.youtube.com/vi/XzpRCkr2HHs/maxresdefault.jpg' },
   { type: 'video', src: 'https://player.vimeo.com/video/1098844722', vimeoId: 1098844722, thumb: fridayHappynessThumb },
   { type: 'video', src: 'https://player.vimeo.com/video/1124918177', vimeoId: 1124918177, thumb: micromusicThumb },
   { type: 'youtube', src: 'https://www.youtube.com/embed/YUPzqaKMB9g', thumb: 'https://img.youtube.com/vi/YUPzqaKMB9g/maxresdefault.jpg' },
@@ -126,8 +127,8 @@ const Gallery = () => {
       </div>
       <div className="gallery-container">
         {media.map((item, idx) => {
-          const isFeatured = idx < 4;
-          const nonFeaturedCount = media.filter((_, i) => i >= 4).length;
+          const isFeatured = idx < 5;
+          const nonFeaturedCount = media.filter((_, i) => i >= 5).length;
           const isLastOdd = idx === media.length - 1 && nonFeaturedCount % 2 !== 0;
           const wrapperClass = `gallery-thumb-wrapper${(isFeatured || isLastOdd) ? ' gallery-thumb-wrapper-featured' : ''}${isLastOdd ? ' gallery-thumb-wrapper-contain' : ''}`;
 

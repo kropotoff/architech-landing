@@ -7,11 +7,13 @@ import SectionDivider from './components/SectionDivider';
 import FadeInSection from './components/FadeInSection';
 import Gallery from './components/Gallery';
 import Hero from './components/Hero.tsx';
+import IntroOverlay from './components/IntroOverlay';
 
 
 function App() {
   return (
     <Container maxWidth="md" className="center-container">
+      <IntroOverlay />
       <FadeInSection><Hero /></FadeInSection>
       <Box maxWidth="sm" mx="auto" pt={5} sx={{ px: { xs: '20px', sm: 0 } }}>
         <FadeInSection><LandingText /></FadeInSection>

@@ -123,7 +123,6 @@ const VideoTile = ({ item, featured, onOpen }: { item: VideoItem; featured?: boo
         src={item.thumb ?? youtubeThumb(item.id)}
         alt=""
         className="gallery-image video-tile-thumb"
-        loading="lazy"
         onError={(e) => {
           // Not every YouTube video has a maxres thumbnail
           if (item.type === 'youtube') e.currentTarget.src = `https://i.ytimg.com/vi/${item.id}/hqdefault.jpg`;
@@ -222,7 +221,7 @@ const Gallery = () => {
               className={`gallery-thumb-wrapper${item.layout ? ` photo-${item.layout}` : ''}`}
               onClick={() => setSelectedIndex(videos.length + i)}
             >
-              <img src={item.src} alt={item.alt} className="gallery-image" loading="lazy" />
+              <img src={item.src} alt={item.alt} className="gallery-image" />
             </div>
           ))}
         </div>

@@ -42,7 +42,6 @@ const SoundcloudSection = () => (
         <iframe
           src="https://www.youtube-nocookie.com/embed/2VotfvF9yZ8?rel=0&cc_load_policy=0"
           title="ArchiTech — Stone · Tribal Techno @ BawiŁąka"
-          loading="lazy"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
           allowFullScreen
           style={{
@@ -61,7 +60,6 @@ const SoundcloudSection = () => (
         <iframe
           src="https://www.youtube-nocookie.com/embed/mkLQBNJp8Mk?rel=0&cc_load_policy=0"
           title="ArchiTech — YouTube"
-          loading="lazy"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
           allowFullScreen
           style={{

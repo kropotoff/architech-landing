@@ -32,16 +32,36 @@ const SoundcloudSection = () => (
         fontSize: '0.68rem',
         letterSpacing: '0.22em',
         textTransform: 'uppercase',
-        color: '#4a4855',
+        color: '#8c8a9a',
         marginBottom: 12,
       }}>
-        Live Set
+        Live Sets
       </div>
 
       <div style={{ position: 'relative', paddingBottom: '56.25%', height: 0, overflow: 'hidden', borderRadius: 4 }}>
         <iframe
-          src="https://www.youtube.com/embed/mkLQBNJp8Mk"
+          src="https://www.youtube-nocookie.com/embed/2VotfvF9yZ8?rel=0&cc_load_policy=0"
+          title="ArchiTech — Stone · Tribal Techno @ BawiŁąka"
+          loading="lazy"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowFullScreen
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            border: 'none',
+            borderRadius: 4,
+          }}
+        />
+      </div>
+
+      <div style={{ position: 'relative', paddingBottom: '56.25%', height: 0, overflow: 'hidden', borderRadius: 4, marginTop: 48 }}>
+        <iframe
+          src="https://www.youtube-nocookie.com/embed/mkLQBNJp8Mk?rel=0&cc_load_policy=0"
           title="ArchiTech — YouTube"
+          loading="lazy"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
           allowFullScreen
           style={{

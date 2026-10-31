@@ -1,9 +1,8 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import Player from '@vimeo/player';
 import arcaneFlyer from '../assets/arcane_flyer.jpg';
 import architechPlaying from '../assets/architech_playing.jpg';
 import architechPicture from '../assets/architech_picture.jpg';
-// import GoaLisboaFlyer from '../assets/GoaLisboaFlyer.jpeg';
 import lineup from '../assets/lineup.jpg';
 import micromusicThumb from '../assets/micromusic_thumb.jpg';
 import fridayHappynessThumb from '../assets/fridayHappyness_thumb.jpg';
@@ -18,64 +17,79 @@ import CloseIcon from '@mui/icons-material/Close';
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 
-const media = [
-  { type: 'image', src: feels },
-  { type: 'youtube', src: 'https://www.youtube.com/embed/XzpRCkr2HHs', thumb: 'https://img.youtube.com/vi/XzpRCkr2HHs/maxresdefault.jpg' },
-  { type: 'video', src: 'https://player.vimeo.com/video/1098844722', vimeoId: 1098844722, thumb: fridayHappynessThumb },
-  { type: 'video', src: 'https://player.vimeo.com/video/1124918177', vimeoId: 1124918177, thumb: micromusicThumb },
-  { type: 'youtube', src: 'https://www.youtube.com/embed/YUPzqaKMB9g', thumb: 'https://img.youtube.com/vi/YUPzqaKMB9g/maxresdefault.jpg' },
-  { type: 'image', src: architechPlaying },
-  { type: 'image', src: dancing },
-  { type: 'image', src: blackAndWhite },
-  { type: 'image', src: lineup },
-  { type: 'image', src: arcaneFlyer },
-  { type: 'image', src: architechPicture },
-  // { type: 'image', src: GoaLisboaFlyer },
+type VideoItem = {
+  type: 'youtube' | 'vimeo';
+  id: string;
+  title: string;
+  place: string;
+  thumb?: string; // required for Vimeo; YouTube thumbs are derived from the id
+};
+
+type PhotoItem = {
+  type: 'image';
+  src: string;
+  alt: string;
+  layout?: 'big' | 'tall' | 'big-mobile';
+};
+
+type MediaItem = VideoItem | PhotoItem;
+
+// To add a YouTube video, paste only the id — the part after /embed/ or youtu.be/
+// (drop any ?si=... share-tracking suffix). The first entry is the featured one.
+const videos: VideoItem[] = [
+  { type: 'youtube', id: '2VotfvF9yZ8', title: 'Stone · Tribal Techno', place: 'BawiŁąka, Bieszczady · Elevator Music' },
+  { type: 'youtube', id: 'XzpRCkr2HHs', title: 'Deep House', place: 'Skowronkowy Jarzmin · Elevator Music' },
+  { type: 'vimeo', id: '1098844722', title: 'Friday Night Pizza Party', place: 'FridayHappyness', thumb: fridayHappynessThumb },
+  { type: 'vimeo', id: '1124918177', title: 'The Undercommons Vol. 3', place: 'LX Factory · Elevator Music', thumb: micromusicThumb },
+  { type: 'youtube', id: 'YUPzqaKMB9g', title: 'Tech House', place: 'Fábrica Braço de Prata · Elevator Music' },
 ];
 
-const Gallery = () => {
-  const [open, setOpen] = useState(false);
-  const [selected, setSelected] = useState<{ type: string; src: string; vimeoId?: number; thumb?: string } | null>(null);
-  const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
-  const isMobile = useMediaQuery('(max-width:600px)');
+// Order matters for the bento grid — see .photo-grid in App.css
+const photos: PhotoItem[] = [
+  { type: 'image', src: feels, alt: 'Crowd at an Architech set', layout: 'big' },
+  { type: 'image', src: dancing, alt: 'Dancing', layout: 'tall' },
+  { type: 'image', src: blackAndWhite, alt: 'Black and white portrait', layout: 'tall' },
+  { type: 'image', src: architechPlaying, alt: 'Architech playing', layout: 'big' },
+  { type: 'image', src: lineup, alt: 'Lineup poster' },
+  { type: 'image', src: arcaneFlyer, alt: 'Arcane flyer', layout: 'big-mobile' },
+  { type: 'image', src: architechPicture, alt: 'Architech portrait' },
+];
 
-  // Refs for the Vimeo preview container divs and player instances
-  const previewContainerRefs = useRef<Map<number, HTMLDivElement>>(new Map());
-  const playerInstances = useRef<Map<number, Player>>(new Map());
+const media: MediaItem[] = [...videos, ...photos];
 
-  // Refs for YouTube preview iframes
-  const ytIframeRefs = useRef<Map<number, HTMLIFrameElement>>(new Map());
+const youtubeThumb = (id: string) => `https://i.ytimg.com/vi/${id}/maxresdefault.jpg`;
 
-  const handleOpen = (item: typeof media[number]) => {
-    setSelected(item);
-    setOpen(true);
-  };
+const embedUrl = (item: VideoItem) =>
+  item.type === 'youtube'
+    ? `https://www.youtube-nocookie.com/embed/${item.id}?autoplay=1&rel=0&cc_load_policy=0`
+    : `https://player.vimeo.com/video/${item.id}?autoplay=1`;
 
-  const handleClose = () => {
-    setOpen(false);
-    setSelected(null);
-  };
+const PlayIcon = () => (
+  <svg viewBox="0 0 56 56" className="video-tile-play">
+    <circle cx="28" cy="28" r="27" fill="rgba(10,10,12,0.6)" stroke="rgba(255,255,255,0.4)" strokeWidth="1.5" />
+    <polygon points="23,18 23,38 41,28" fill="white" />
+  </svg>
+);
 
-  const currentIndex = selected ? media.findIndex(item => item.src === selected.src) : -1;
+const VideoTile = ({ item, featured, onOpen }: { item: VideoItem; featured?: boolean; onOpen: () => void }) => {
+  const [hovered, setHovered] = useState(false);
+  const [ytPreviewSrc, setYtPreviewSrc] = useState('');
+  const vimeoContainer = useRef<HTMLDivElement>(null);
+  const vimeoPlayer = useRef<Player | null>(null);
 
-  const handlePrev = () => {
-    if (currentIndex > 0) setSelected(media[currentIndex - 1]);
-  };
-
-  const handleNext = () => {
-    if (currentIndex < media.length - 1) setSelected(media[currentIndex + 1]);
-  };
-
-  const handleVideoMouseEnter = (idx: number, vimeoId: number) => {
-    setHoveredIdx(idx);
-    const container = previewContainerRefs.current.get(idx);
-    if (!container) return;
-
+  const handleMouseEnter = () => {
+    setHovered(true);
+    if (item.type === 'youtube') {
+      setYtPreviewSrc(
+        `https://www.youtube-nocookie.com/embed/${item.id}?autoplay=1&mute=1&controls=0&loop=1&playlist=${item.id}`
+      );
+      return;
+    }
+    if (!vimeoContainer.current) return;
     // Lazy-init: create the player only on first hover
-    let player = playerInstances.current.get(idx);
-    if (!player) {
-      player = new Player(container, {
-        id: vimeoId,
+    if (!vimeoPlayer.current) {
+      vimeoPlayer.current = new Player(vimeoContainer.current, {
+        id: Number(item.id),
         muted: true,
         controls: false,
         loop: true,
@@ -84,29 +98,93 @@ const Gallery = () => {
         portrait: false,
         width: 640,
       });
-      playerInstances.current.set(idx, player);
     }
-    player.play().catch(() => {});
+    vimeoPlayer.current.play().catch(() => {});
   };
 
-  const handleVideoMouseLeave = (idx: number) => {
-    setHoveredIdx(null);
-    playerInstances.current.get(idx)?.pause();
+  const handleMouseLeave = () => {
+    setHovered(false);
+    if (item.type === 'youtube') setYtPreviewSrc('');
+    else vimeoPlayer.current?.pause();
   };
 
-  const handleYouTubeMouseEnter = (idx: number, src: string) => {
-    setHoveredIdx(idx);
-    const iframe = ytIframeRefs.current.get(idx);
-    if (iframe && !iframe.src) {
-      iframe.src = `${src}?autoplay=1&mute=1&controls=0&loop=1&playlist=${src.split('/').pop()}`;
-    }
-  };
+  return (
+    <div
+      className={`video-tile${featured ? ' video-tile-featured' : ''}${hovered ? ' is-previewing' : ''}`}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      onClick={onOpen}
+      role="button"
+      tabIndex={0}
+      aria-label={`Play ${item.title}`}
+      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onOpen(); } }}
+    >
+      <img
+        src={item.thumb ?? youtubeThumb(item.id)}
+        alt=""
+        className="gallery-image video-tile-thumb"
+        loading="lazy"
+        onError={(e) => {
+          // Not every YouTube video has a maxres thumbnail
+          if (item.type === 'youtube') e.currentTarget.src = `https://i.ytimg.com/vi/${item.id}/hqdefault.jpg`;
+        }}
+      />
 
-  const handleYouTubeMouseLeave = (idx: number) => {
-    setHoveredIdx(null);
-    const iframe = ytIframeRefs.current.get(idx);
-    if (iframe) iframe.src = '';
-  };
+      {item.type === 'youtube' ? (
+        <iframe
+          src={ytPreviewSrc || undefined}
+          title={`${item.title} preview`}
+          allow="autoplay"
+          tabIndex={-1}
+          className="video-tile-preview"
+        />
+      ) : (
+        <div ref={vimeoContainer} className="video-tile-preview vimeo-preview" />
+      )}
+
+      <PlayIcon />
+
+      <div className="video-tile-badge">{featured ? 'Latest' : 'Video'}</div>
+
+      <div className="video-tile-caption">
+        <div className="video-tile-title">{item.title}</div>
+        <div className="video-tile-place">{item.place}</div>
+      </div>
+
+      <div className="video-tile-hint">click for sound</div>
+    </div>
+  );
+};
+
+const SectionLabel = ({ children }: { children: string }) => (
+  <div className="gallery-label">{children}</div>
+);
+
+const Gallery = () => {
+  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+  const isMobile = useMediaQuery('(max-width:600px)');
+
+  const open = selectedIndex !== null;
+  const selected = open ? media[selectedIndex] : null;
+
+  const handleClose = () => setSelectedIndex(null);
+  const handlePrev = () => setSelectedIndex(i => (i !== null && i > 0 ? i - 1 : i));
+  const handleNext = () => setSelectedIndex(i => (i !== null && i < media.length - 1 ? i + 1 : i));
+
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowLeft') setSelectedIndex(i => (i !== null && i > 0 ? i - 1 : i));
+      if (e.key === 'ArrowRight') setSelectedIndex(i => (i !== null && i < media.length - 1 ? i + 1 : i));
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [open]);
+
+  const [featured, ...restVideos] = videos;
+  const counter = open
+    ? `${String(selectedIndex + 1).padStart(2, '0')} / ${String(media.length).padStart(2, '0')}`
+    : '';
 
   return (
     <div>
@@ -125,219 +203,29 @@ const Gallery = () => {
           Moments
         </Typography>
       </div>
-      <div className="gallery-container">
-        {media.map((item, idx) => {
-          const isFeatured = idx < 5;
-          const nonFeaturedCount = media.filter((_, i) => i >= 5).length;
-          const isLastOdd = idx === media.length - 1 && nonFeaturedCount % 2 !== 0;
-          const wrapperClass = `gallery-thumb-wrapper${(isFeatured || isLastOdd) ? ' gallery-thumb-wrapper-featured' : ''}${isLastOdd ? ' gallery-thumb-wrapper-contain' : ''}`;
 
-          if (item.type === 'youtube') {
-            return (
-              <div
-                key={idx}
-                className={wrapperClass}
-                onMouseEnter={() => handleYouTubeMouseEnter(idx, item.src)}
-                onMouseLeave={() => handleYouTubeMouseLeave(idx)}
-                onClick={() => handleOpen(item)}
-              >
-                {/* Static thumbnail */}
-                <img
-                  src={item.thumb}
-                  alt="Video thumbnail"
-                  className="gallery-image"
-                  style={{ opacity: hoveredIdx === idx ? 0 : 1, transition: 'opacity 0.4s ease' }}
-                />
+      <div className="gallery">
+        <VideoTile item={featured} featured onOpen={() => setSelectedIndex(0)} />
 
-                {/* YouTube iframe preview — fades in on hover */}
-                <iframe
-                  ref={(el) => { if (el) ytIframeRefs.current.set(idx, el); }}
-                  title="YouTube preview"
-                  allow="autoplay"
-                  style={{
-                    position: 'absolute',
-                    inset: 0,
-                    width: '100%',
-                    height: '100%',
-                    border: 'none',
-                    pointerEvents: 'none',
-                    opacity: hoveredIdx === idx ? 1 : 0,
-                    transition: 'opacity 0.4s ease',
-                  }}
-                />
+        <SectionLabel>Sets</SectionLabel>
+        <div className="video-grid">
+          {restVideos.map((item, i) => (
+            <VideoTile key={item.id} item={item} onOpen={() => setSelectedIndex(i + 1)} />
+          ))}
+        </div>
 
-                {/* Play button */}
-                <svg
-                  viewBox="0 0 56 56"
-                  style={{
-                    position: 'absolute',
-                    width: 56,
-                    height: 56,
-                    top: '50%',
-                    left: '50%',
-                    transform: 'translate(-50%, -50%)',
-                    zIndex: 3,
-                    pointerEvents: 'none',
-                    filter: 'drop-shadow(0 2px 12px rgba(0,0,0,0.7))',
-                    opacity: hoveredIdx === idx ? 0 : 1,
-                    transition: 'opacity 0.3s ease',
-                  }}
-                >
-                  <circle cx="28" cy="28" r="27" fill="rgba(10,10,12,0.6)" stroke="rgba(255,255,255,0.4)" strokeWidth="1.5" />
-                  <polygon points="23,18 23,38 41,28" fill="white" />
-                </svg>
-
-                {/* Video badge */}
-                <div style={{
-                  position: 'absolute',
-                  top: 10,
-                  left: 10,
-                  zIndex: 4,
-                  pointerEvents: 'none',
-                  fontFamily: "'Space Mono', monospace",
-                  fontSize: '0.55rem',
-                  letterSpacing: '0.18em',
-                  textTransform: 'uppercase',
-                  color: 'rgba(240,239,245,0.7)',
-                  background: 'rgba(10,10,12,0.55)',
-                  border: '1px solid rgba(255,255,255,0.12)',
-                  borderRadius: 2,
-                  padding: '3px 7px',
-                }}>
-                  Video
-                </div>
-
-                {/* "Click for sound" hint */}
-                <div
-                  style={{
-                    position: 'absolute',
-                    bottom: 12,
-                    left: '50%',
-                    transform: 'translateX(-50%)',
-                    zIndex: 4,
-                    pointerEvents: 'none',
-                    opacity: hoveredIdx === idx ? 1 : 0,
-                    transition: 'opacity 0.4s ease 0.2s',
-                    fontFamily: "'Space Mono', monospace",
-                    fontSize: '0.6rem',
-                    letterSpacing: '0.18em',
-                    textTransform: 'uppercase',
-                    color: 'rgba(240,239,245,0.7)',
-                    whiteSpace: 'nowrap',
-                  }}
-                >
-                  click for sound
-                </div>
-              </div>
-            );
-          }
-
-          if (item.type === 'video' && item.vimeoId) {
-            return (
-              <div
-                key={idx}
-                className={wrapperClass}
-                onMouseEnter={() => handleVideoMouseEnter(idx, item.vimeoId!)}
-                onMouseLeave={() => handleVideoMouseLeave(idx)}
-                onClick={() => handleOpen(item)}
-              >
-                {/* Static thumbnail — shown until hover */}
-                <img
-                  src={item.thumb}
-                  alt="Video thumbnail"
-                  className="gallery-image"
-                  style={{ opacity: hoveredIdx === idx ? 0 : 1, transition: 'opacity 0.4s ease' }}
-                />
-
-                {/* Vimeo player preview — fades in on hover */}
-                <div
-                  className="vimeo-preview"
-                  style={{ opacity: hoveredIdx === idx ? 1 : 0 }}
-                  ref={(el) => {
-                    if (el) previewContainerRefs.current.set(idx, el);
-                  }}
-                />
-
-                {/* Play button — hidden while previewing */}
-                <svg
-                  viewBox="0 0 56 56"
-                  style={{
-                    position: 'absolute',
-                    width: 56,
-                    height: 56,
-                    top: '50%',
-                    left: '50%',
-                    transform: 'translate(-50%, -50%)',
-                    zIndex: 3,
-                    pointerEvents: 'none',
-                    filter: 'drop-shadow(0 2px 12px rgba(0,0,0,0.7))',
-                    opacity: hoveredIdx === idx ? 0 : 1,
-                    transition: 'opacity 0.3s ease',
-                  }}
-                >
-                  <circle cx="28" cy="28" r="27" fill="rgba(10,10,12,0.6)" stroke="rgba(255,255,255,0.4)" strokeWidth="1.5" />
-                  <polygon points="23,18 23,38 41,28" fill="white" />
-                </svg>
-
-                {/* Persistent video badge — always visible, communicates media type */}
-                <div style={{
-                  position: 'absolute',
-                  top: 10,
-                  left: 10,
-                  zIndex: 4,
-                  pointerEvents: 'none',
-                  fontFamily: "'Space Mono', monospace",
-                  fontSize: '0.55rem',
-                  letterSpacing: '0.18em',
-                  textTransform: 'uppercase',
-                  color: 'rgba(240,239,245,0.7)',
-                  background: 'rgba(10,10,12,0.55)',
-                  border: '1px solid rgba(255,255,255,0.12)',
-                  borderRadius: 2,
-                  padding: '3px 7px',
-                }}>
-                  Video
-                </div>
-
-                {/* "Click for sound" hint — appears on hover */}
-                <div
-                  style={{
-                    position: 'absolute',
-                    bottom: 12,
-                    left: '50%',
-                    transform: 'translateX(-50%)',
-                    zIndex: 4,
-                    pointerEvents: 'none',
-                    opacity: hoveredIdx === idx ? 1 : 0,
-                    transition: 'opacity 0.4s ease 0.2s',
-                    fontFamily: "'Space Mono', monospace",
-                    fontSize: '0.6rem',
-                    letterSpacing: '0.18em',
-                    textTransform: 'uppercase',
-                    color: 'rgba(240,239,245,0.7)',
-                    whiteSpace: 'nowrap',
-                  }}
-                >
-                  click for sound
-                </div>
-              </div>
-            );
-          }
-
-          return (
+        <SectionLabel>Photos</SectionLabel>
+        <div className="photo-grid">
+          {photos.map((item, i) => (
             <div
-              key={idx}
-              className={wrapperClass}
-              onClick={() => handleOpen(item)}
+              key={item.src}
+              className={`gallery-thumb-wrapper${item.layout ? ` photo-${item.layout}` : ''}`}
+              onClick={() => setSelectedIndex(videos.length + i)}
             >
-              <img
-                src={item.src}
-                alt={`Gallery ${idx + 1}`}
-                className="gallery-image"
-              />
+              <img src={item.src} alt={item.alt} className="gallery-image" loading="lazy" />
             </div>
-          );
-        })}
+          ))}
+        </div>
       </div>
 
       <Dialog
@@ -355,6 +243,7 @@ const Gallery = () => {
             maxWidth: '1400px',
             height: isMobile ? '100%' : 'auto',
             display: 'flex',
+            flexDirection: 'column',
             alignItems: 'center',
             justifyContent: 'center',
             overflow: 'hidden',
@@ -379,48 +268,61 @@ const Gallery = () => {
         </IconButton>
 
         {/* Content */}
-        {selected && (selected.type === 'video' || selected.type === 'youtube') ? (
-          <div style={{
-            width: '100%',
-            aspectRatio: '16/9',
-            maxHeight: isMobile ? '100vh' : '85vh',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}>
-            <iframe
-              src={`${selected.src}?autoplay=1`}
-              title="Video"
-              style={{
-                width: '100%',
-                height: '100%',
-                border: 'none',
-                display: 'block',
-                background: '#000',
-              }}
-              allow="autoplay; fullscreen; picture-in-picture"
-              allowFullScreen
-            />
-          </div>
+        {selected && selected.type !== 'image' ? (
+          <>
+            <div style={{
+              width: '100%',
+              aspectRatio: '16/9',
+              maxHeight: '80vh',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}>
+              <iframe
+                key={selected.id}
+                src={embedUrl(selected)}
+                title={selected.title}
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  border: 'none',
+                  display: 'block',
+                  background: '#000',
+                }}
+                allow="autoplay; fullscreen; picture-in-picture; encrypted-media"
+                allowFullScreen
+              />
+            </div>
+            <div className="lightbox-caption">
+              <span className="lightbox-counter">{counter}</span>
+              <span className="video-tile-title">{selected.title}</span>
+              <span className="video-tile-place">{selected.place}</span>
+            </div>
+          </>
         ) : (
           selected && (
-            <img
-              src={selected.src}
-              alt="Large preview"
-              style={{
-                display: 'block',
-                maxWidth: '100%',
-                maxHeight: isMobile ? '100vh' : '90vh',
-                width: 'auto',
-                height: 'auto',
-                objectFit: 'contain',
-              }}
-            />
+            <>
+              <img
+                src={selected.src}
+                alt={selected.alt}
+                style={{
+                  display: 'block',
+                  maxWidth: '100%',
+                  maxHeight: isMobile ? 'calc(100vh - 48px)' : 'calc(90vh - 48px)',
+                  width: 'auto',
+                  height: 'auto',
+                  objectFit: 'contain',
+                }}
+              />
+              <div className="lightbox-caption">
+                <span className="lightbox-counter">{counter}</span>
+              </div>
+            </>
           )
         )}
 
         {/* Prev / Next */}
-        {open && currentIndex > 0 && (
+        {open && selectedIndex > 0 && (
           <IconButton
             aria-label="previous"
             onClick={handlePrev}
@@ -440,7 +342,7 @@ const Gallery = () => {
             <ArrowBackIosNewIcon sx={{ fontSize: 18 }} />
           </IconButton>
         )}
-        {open && currentIndex < media.length - 1 && (
+        {open && selectedIndex < media.length - 1 && (
           <IconButton
             aria-label="next"
             onClick={handleNext}

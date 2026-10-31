@@ -115,7 +115,7 @@ const BookingModal = ({ open, onClose }: Props) => {
             fontSize: '0.68rem',
             letterSpacing: '0.2em',
             textTransform: 'uppercase',
-            color: '#4a4855',
+            color: '#8c8a9a',
             mt: 0.5,
           }}
         >

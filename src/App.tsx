@@ -41,7 +41,7 @@ function App() {
         textTransform: 'uppercase',
         textAlign: 'center',
       }}>
-        ARCHITECH © 2025 — ALL RIGHTS RESERVED
+        ARCHITECH — ALL RIGHTS RESERVED
       </Box>
     </Container>
   );
